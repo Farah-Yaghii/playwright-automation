@@ -40,7 +40,9 @@ jobs:
 
       # Step 4: Install required browsers
       - name: Install browsers
-        run: npx playwright install --with-deps chromium firefox
+        run: |
+          npx playwright install --with-deps chromium firefox
+          npx playwright install chrome
 
       # Step 5: Run tests on both browsers
       - name: Run Playwright tests

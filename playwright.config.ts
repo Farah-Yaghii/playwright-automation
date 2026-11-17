@@ -5,10 +5,11 @@ export default defineConfig({
 
   // Step 1: Define the tests folder
   testDir: './tests',
+
   // Run before all tests
   globalSetup: './src/fixtures/globalSetup.ts',
 
-// Run after all tests
+  // Run after all tests
   globalTeardown: './src/fixtures/globalTeardown.ts',
 
   // Step 2: Allow tests to run in parallel
@@ -36,7 +37,7 @@ export default defineConfig({
     screenshot: 'only-on-failure'
   },
 
-  // Step 8: Configure Chrome and Firefox
+  // Step 8: Configure Google Chrome and Firefox
   projects: [
 
     {
@@ -44,13 +45,16 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
 
+        // Use the installed Google Chrome browser
+        channel: 'chrome',
+
         // Use the browser window size
         viewport: null,
 
         // Fix deviceScaleFactor conflict
         deviceScaleFactor: undefined,
 
-        // Start Chromium with a maximized window
+        // Launch Google Chrome maximized
         launchOptions: {
           args: ['--start-maximized']
         }
@@ -61,7 +65,11 @@ export default defineConfig({
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
+
+        // Use the browser window size
         viewport: null,
+
+        // Fix deviceScaleFactor conflict
         deviceScaleFactor: undefined
       }
     }
