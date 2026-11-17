@@ -1,109 +1,221 @@
 
 # Playwright UI & API Automation Framework
 
-## Project Overview
+[![Playwright Automation Tests](https://github.com/Farah-Yaghii/playwright-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/Farah-Yaghii/playwright-automation/actions/workflows/playwright.yml)
 
-This project is an automated testing framework built using
-Playwright and TypeScript.
+## 1. Project Overview
 
-It covers UI testing for SauceDemo and API testing for
-the Simple Books API.
+This project is a scalable UI and API test automation framework built using Playwright and TypeScript.
 
-## Technologies
+It automates SauceDemo web application scenarios and Simple Books API operations using Page Object Model (POM), reusable API helpers, external test data, and GitHub Actions CI/CD.
 
-- Playwright
-- TypeScript
-- Node.js
-- GitHub Actions
+## 2. Prerequisites
 
-## Project Structure
+- Node.js 22.x
+- npm 10.x or a compatible npm version
+- Git
 
-- src/pages: Page Object Model classes
-- src/api: API helper methods
-- src/data: External test data
-- src/utils: Random test data generator
-- src/fixtures: Global setup and teardown
-- tests/ui: UI test cases
-- tests/api: API test cases
-- .github/workflows: CI/CD configuration
+Check installed versions:
 
-## UI Test Scenarios
+```bash
+node --version
+npm --version
+git --version
+```
 
-- TC_UI_001: Valid Login
-- TC_UI_002: Invalid Login (Data-Driven)
-- TC_UI_003: Sort Products Z to A
-- TC_UI_004: End-to-End Checkout
+## 3. Setup & Installation
 
-## API Test Scenarios
+1. Clone the repository:
 
-- TC_API_001: Create Order
-- TC_API_002: Get Order
-- TC_API_003: Update Order
-- TC_API_004: Delete Order and Verify 404
+```bash
+git clone https://github.com/Farah-Yaghii/playwright-automation.git
+```
 
-## Installation
+2. Navigate to the project directory:
 
-Install project dependencies:
+```bash
+cd playwright-automation
+```
 
-    npm ci
+3. Install dependencies:
 
-Install required browsers:
+```bash
+npm ci
+```
 
-    npx playwright install chromium firefox
+4. Install Playwright browsers:
 
-## Run Tests
+```bash
+npx playwright install chromium firefox
+```
 
-Run all tests:
+## 4. Running Tests
 
-    npx playwright test
+Run all UI and API tests:
 
-Run UI tests:
+```bash
+npx playwright test
+```
 
-    npx playwright test tests/ui
+Run UI tests only:
 
-Run API tests:
+```bash
+npx playwright test tests/ui
+```
 
-    npx playwright test tests/api
+Run API tests only:
+
+```bash
+npx playwright test tests/api
+```
+
+Run tests on Chromium and Firefox:
+
+```bash
+npx playwright test --project=chromium --project=firefox
+```
 
 Run Chromium tests:
 
-    npx playwright test --project=chromium
+```bash
+npx playwright test --project=chromium
+```
 
 Run Firefox tests:
 
-    npx playwright test --project=firefox
+```bash
+npx playwright test --project=firefox
+```
 
 Run UI tests with a visible browser:
 
-    npx playwright test tests/ui --headed --workers=1
+```bash
+npx playwright test tests/ui --headed --workers=1
+```
 
-## Test Reports
+## 5. Architecture & Project Structure
 
-Generate and view the HTML report:
+The framework follows the Page Object Model (POM) design pattern to separate UI interactions from test assertions.
 
-    npx playwright show-report
+```text
+playwright-automation/
+├── .github/
+│   └── workflows/
+│       └── playwright.yml     # GitHub Actions CI/CD
+├── src/
+│   ├── pages/                 # UI Page Object Model classes
+│   ├── api/                   # Reusable API request methods
+│   ├── fixtures/              # Global setup and teardown
+│   ├── data/                  # External JSON test data
+│   └── utils/                 # Random test data utilities
+├── tests/
+│   ├── ui/                    # SauceDemo UI tests
+│   └── api/                   # Simple Books API tests
+├── playwright.config.ts       # Playwright configuration
+├── package.json               # Dependencies and scripts
+├── package-lock.json          # Dependency lockfile
+├── tsconfig.json              # TypeScript configuration
+├── .gitignore                 # Excluded generated files
+└── README.md                  # Project documentation
+```
 
-Screenshots are captured on test failures.
-Traces are collected on the first retry.
+### Architecture Decisions
 
-## CI/CD
+- **Page Object Model:** Keeps UI locators and interactions separate from test logic.
+- **API Helpers:** Centralizes reusable API operations.
+- **External JSON Data:** Supports data-driven test execution.
+- **Utilities:** Generates unique values for dynamic API requests.
+- **Global Setup and Teardown:** Logs the start and completion of the test suite.
+- **Cross-Browser Testing:** Runs tests using Chromium and Firefox.
 
-GitHub Actions runs automated tests:
+## 6. Test Scenarios
 
-- After changes are pushed or merged into main
-- Every day at 3:00 AM Amman time
-- Manually using workflow_dispatch
+### UI Test Cases — SauceDemo
 
-The workflow uploads the HTML test report as an artifact.
+| Test ID | Scenario | Validation |
+|---|---|---|
+| TC_UI_001 | Valid Login | Verify successful login and navigation to Products |
+| TC_UI_002 | Invalid Login | Verify errors for missing username, missing password, and invalid credentials |
+| TC_UI_003 | Sort Products Z to A | Verify reverse-alphabetical product order |
+| TC_UI_004 | End-to-End Checkout | Select two most expensive products, validate subtotal before tax, and confirm order |
 
-## Test Framework Features
+### API Test Cases — Simple Books API
 
+| Test ID | Scenario | Validation |
+|---|---|---|
+| TC_API_001 | Authenticate and Create Order | Verify token generation, HTTP 201, and returned order ID |
+| TC_API_002 | Get Order | Verify HTTP 200 and order details |
+| TC_API_003 | Update Order | Verify HTTP 204 and updated customer name |
+| TC_API_004 | Delete Order | Verify HTTP 204 and subsequent HTTP 404 |
+
+API tests use dynamically generated email addresses and reusable API helpers.
+
+## 7. Test Reports
+
+Playwright generates an HTML test report after test execution.
+
+To open the report locally:
+
+1. Run the test suite:
+
+```bash
+npx playwright test
+```
+
+2. Open the HTML report:
+
+```bash
+npx playwright show-report
+```
+
+3. Review test results, errors, and execution details in the browser.
+
+Screenshots are captured on test failures, and traces are collected on the first retry.
+
+## 8. CI/CD — GitHub Actions
+
+The workflow is located at:
+
+`.github/workflows/playwright.yml`
+
+### Workflow Triggers
+
+- Pushes and merges into the `main` branch
+- Daily scheduled execution at 3:00 AM Amman time (00:00 UTC)
+- Manual execution using GitHub Actions
+
+### Workflow Steps
+
+1. Checkout the repository.
+2. Set up Node.js 22.
+3. Install project dependencies.
+4. Install Playwright browsers.
+5. Execute tests on Chromium and Firefox.
+6. Upload the HTML report as an artifact, even if tests fail.
+
+### View CI Reports
+
+1. Open the GitHub repository.
+2. Select the **Actions** tab.
+3. Open the latest **Playwright Automation Tests** workflow run.
+4. Scroll down to the **Artifacts** section.
+5. Download `playwright-html-report`.
+6. Extract the downloaded ZIP file.
+7. Open `index.html` to view the report.
+
+## 9. Framework Features
+
+- Playwright with TypeScript
 - Page Object Model (POM)
-- Data-driven login testing
-- API CRUD operations
-- Dynamic product selection
-- Cross-browser testing
-- Global setup and teardown
+- Data-driven testing using JSON
+- API CRUD testing
+- Dynamic product selection by price
+- Cross-browser execution
+- Global setup and teardown logging
 - Random test data generation
-- HTML reporting
-- GitHub Actions integration
+- HTML reports, screenshots, and traces
+- Automated CI/CD with GitHub Actions
+
+## Repository
+
+https://github.com/Farah-Yaghii/playwright-automation
