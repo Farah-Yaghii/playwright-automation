@@ -1,0 +1,56 @@
+
+# Workflow name
+name: Playwright Automation Tests
+
+# Define workflow triggers
+on:
+  # Run after pushing or merging changes into main
+  push:
+    branches: [main]
+
+  # Run tests every day at 3 AM Amman time
+  # Amman is UTC+3, so 3 AM = 00:00 UTC
+  schedule:
+    - cron: '0 0 * * *'
+
+  # Allow manual execution
+  workflow_dispatch:
+
+jobs:
+  test:
+    # Use Ubuntu runner
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Install required browsers
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      # Step 5: Run tests on both browsers
+      - name: Run Playwright tests
+        run: npx playwright test --project=chromium --project=firefox
+
+      # Step 6: Upload HTML report even if tests fail
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: playwright-report/
+          retention-days: 30
