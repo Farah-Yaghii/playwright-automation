@@ -1,0 +1,59 @@
+
+import { Page, Locator } from '@playwright/test';
+
+export class ProductsPage {
+    readonly page: Page;
+    readonly sortDropdown: Locator;
+    readonly productNames: Locator;
+
+    constructor(page: Page) {
+        this.page = page;
+        this.sortDropdown = page.locator('[data-test="product-sort-container"]');
+        this.productNames = page.locator('[data-test="inventory-item-name"]');
+    }
+
+    async sortByNameZA() {
+        await this.sortDropdown.selectOption('za');
+    }
+
+    async getProductNames(): Promise<string[]> {
+        return await this.productNames.allTextContents();
+    }
+
+    // Find the two most expensive products and add them to cart
+    async addTwoMostExpensiveProducts(): Promise<number[]> {
+
+        // Step 1: Get all products from the page
+        const products = this.page.locator('[data-test="inventory-item"]');
+
+        const productData: { price: number; index: number }[] = [];
+
+        // Step 2: Read each product price
+        for (let i = 0; i < await products.count(); i++) {
+            const priceText = await products.nth(i)
+                .locator('[data-test="inventory-item-price"]')
+                .innerText();
+
+            const price = Number(priceText.replace('$', ''));
+
+            productData.push({ price, index: i });
+        }
+
+        // Step 3: Sort products by price (highest first)
+        productData.sort((a, b) => b.price - a.price);
+
+        // Step 4: Select the two most expensive products
+        const topTwo = productData.slice(0, 2);
+
+        // Step 5: Add both products to the cart
+        for (const product of topTwo) {
+            await products.nth(product.index)
+                .locator('button[data-test^="add-to-cart"]')
+                .click();
+        }
+
+        // Return selected prices for checkout total validation
+        return topTwo.map(product => product.price);
+    }
+
+}
