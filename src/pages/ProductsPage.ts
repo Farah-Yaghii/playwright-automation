@@ -38,12 +38,23 @@ export class ProductsPage {
             '[data-test="inventory-item"]'
         );
 
+        // Wait until at least two products are loaded
+        await expect.poll(
+            async () => await products.count(),
+            {
+                message: 'Wait for at least two products to load'
+            }
+        ).toBeGreaterThanOrEqual(2);
+
         // Store each product price and index
         const productData: { price: number; index: number }[] = [];
 
         // Step 2: Read each product price
-        for (let i = 0; i < await products.count(); i++) {
+        const productCount = await products.count();
 
+        for (let i = 0; i < productCount; i++) {
+
+            // Get the price text of the current product
             const priceText = await products.nth(i)
                 .locator('[data-test="inventory-item-price"]')
                 .innerText();
@@ -51,6 +62,7 @@ export class ProductsPage {
             // Convert price text to a number
             const price = Number(priceText.replace('$', ''));
 
+            // Save the product price and index
             productData.push({ price, index: i });
         }
 
@@ -71,8 +83,7 @@ export class ProductsPage {
                 .locator('button[data-test^="add-to-cart"]')
                 .click();
 
-            // Verify the product was successfully added
-            // The button should change from Add to cart to Remove
+            // Verify the button changed from Add to cart to Remove
             await expect(
                 selectedProduct.locator(
                     'button[data-test^="remove"]'
